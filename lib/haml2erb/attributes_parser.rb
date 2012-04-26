@@ -9,7 +9,7 @@ module Haml2Erb
     end
     attr_reader :pairs, :attributes
     
-    CONTENTS    = /^, \{?(.*)\}?$/
+    CONTENTS    = /^, \{(.*)\}$/
     ROCKET      = '\=\>'
     
     SYMBOL_TEXT = '[\w_]+'

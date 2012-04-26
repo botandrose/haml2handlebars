@@ -193,6 +193,7 @@ module Haml2Erb
         else
           attributes_hashes = ", (#{attributes_hashes.join(").merge(")})"
         end
+        attributes_hashes.gsub! ",}", "}"
 
         push_merged_text "<#{t[:name]}", 0, !t[:nuke_outer_whitespace]
 
