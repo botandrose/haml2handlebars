@@ -72,7 +72,9 @@ module Haml2Erb
           hash = attributes.scan(CONTENTS).flatten.first
           hash.strip!
           hash.gsub! /\s*,$/, ''
-          " <%= tag_options({#{hash}}, false) %>"
+          hash.gsub! /\#{(\w+)}/, "{{\\1}}"
+          hash = eval "{#{hash}}"
+          " #{hash.keys.first}=\"#{hash.values.first}\""
         else
           pairs.map do |(key, value)|
             "#{key}='#{value.gsub("'", '&#x27;')}'"

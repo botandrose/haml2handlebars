@@ -29,9 +29,9 @@ haml = %q{
       %section#dr_doomboard(data-widget="dr_doomboard")
 
     %section#projects
-      - [1,2,3].each do |n|
+      - each numbers
         = n
-      - 1234
+      = 1234
     %aside.right
       %section#tweets(data-widget="twitter")
       %section#hammurabi
@@ -39,22 +39,22 @@ haml = %q{
 
 erb = %q{<!DOCTYPE html>
 <html lang='en'>
-  <head <%= tag_options({"dynamic" => "#{attribute}"}, false) %>>
-    <% ciao %>
-    <% if 3 %>
-      <%= pippo %>
-    <% else %>
-      <%= caio %>
-    <% end %>
+  <head dynamic="{{attribute}}">
+    {{ciao}}
+    {{#if 3}}
+      {{pippo}}
+    {{else}}
+      {{caio}}
+    {{/if}}
     <meta charset='utf-8'>
     <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
-    <%= csrf_meta_tags %>
+    {{csrf_meta_tags}}
     <title>Doomboard!</title>
     <!-- Mobile viewport optimized: j.mp/bplateviewport -->
     <meta content='width=device-width,initial-scale=1' name='viewport'>
-    <%= javascript_include_tag 'http://js.pusherapp.com/1.9/pusher.min.js' %>
-    <%= stylesheet_link_tag    'application' %>
-    <%= javascript_include_tag 'application' %>
+    {{javascript_include_tag 'http://js.pusherapp.com/1.9/pusher.min.js'}}
+    {{stylesheet_link_tag    'application'}}
+    {{javascript_include_tag 'application'}}
   </head>
   <body>
     <aside class='left'>
@@ -62,10 +62,10 @@ erb = %q{<!DOCTYPE html>
       <section data-widget='dr_doomboard' id='dr_doomboard'></section>
     </aside>
     <section id='projects'>
-      <% [1,2,3].each do |n| %>
-        <%= n %>
-      <% end %>
-      <% 1234 %>
+      {{#each numbers}}
+        {{n}}
+      {{/each}}
+      {{1234}}
     </section>
     <aside class='right'>
       <section data-widget='twitter' id='tweets'></section>

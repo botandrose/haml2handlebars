@@ -1,12 +1,17 @@
 require 'haml'
 require 'haml2erb/attributes_parser'
 
+module Haml::Parser
+  START_BLOCK_KEYWORDS << "each"
+  START_BLOCK_KEYWORD_REGEX = /(?:\w+(?:,\s*\w+)*\s*=\s*)?(#{START_BLOCK_KEYWORDS.join('|')})/
+  BLOCK_KEYWORD_REGEX = /^-\s*(?:(#{MID_BLOCK_KEYWORDS.join('|')})|#{START_BLOCK_KEYWORD_REGEX.source})\b/
+end
 
 module Haml2Erb
   class Engine < Haml::Engine
 
 
-    def push_silent(text, can_suppress = false)
+    def push_silent(text, can_suppress = false, opts = {})
       flush_merged_text
       return if can_suppress && options[:suppress_eval]
       # WAS:
@@ -14,9 +19,9 @@ module Haml2Erb
       # @output_line += text.count("\n") + 1
 
       push_script(text,
-        :preserve_script => @node.value[:preserve],
+        opts.merge(:preserve_script => @node.value[:preserve],
         :escape_html => @node.value[:escape_html],
-        :silent => true)
+        :silent => true))
     end
 
     def compile_haml_comment
@@ -34,7 +39,7 @@ module Haml2Erb
       keyword = @node.value[:keyword]
       @output_tabs -= 1 if Haml::Parser::MID_BLOCK_KEYWORDS.include?(keyword)
 
-      push_silent(@node.value[:text])
+      push_silent(@node.value[:text], false, :block_given => block_given?)
       ruby_block = block_given? && !keyword
 
 
@@ -48,7 +53,7 @@ module Haml2Erb
         yield
         @output_tabs -= 1
 
-        push_silent("end", :can_suppress) unless @node.value[:dont_push_end]
+        push_silent("/#{@node.value[:keyword]}", :can_suppress) unless @node.value[:dont_push_end]
       elsif keyword == "end"
         if @node.parent.children.last.equal?(@node)
           # Since this "end" is ending the block,
@@ -66,9 +71,8 @@ module Haml2Erb
     end
 
     def push_script text, opts={}
-      tag_lead = opts[:silent] ? '' : '='
-      tag_lead << '#' if opts[:comment]
-      erb_tag = "<%#{tag_lead} #{text.strip} %>"
+      tag_lead = opts[:block_given] ? "#" : ""
+      erb_tag = "{{#{tag_lead}#{text.strip}}}"
 
       # USED TO START HERE:
       return if options[:suppress_eval]
