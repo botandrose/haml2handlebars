@@ -37,7 +37,7 @@ haml = %q{
       %section#hammurabi
 }
 
-erb = %q{<!DOCTYPE html>
+handlebars = %q{<!DOCTYPE html>
 <html lang='en'>
   <head dynamic="{{attribute}}">
     {{ciao}}
@@ -76,8 +76,10 @@ erb = %q{<!DOCTYPE html>
 }
 
 
-describe 'haml2erb' do
-  it 'converts to ERB' do
-    Haml2Erb.convert(haml).should eq(erb)
+describe Haml2Handlebars do
+  describe ".convert" do
+    it 'converts haml to handlebars' do
+      Haml2Handlebars.convert(haml).should eq(handlebars)
+    end
   end
 end

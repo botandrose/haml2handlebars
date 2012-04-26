@@ -1,17 +1,17 @@
 # coding: utf-8
 $:.push File.expand_path('../lib', __FILE__)
-require 'haml2erb/version'
+require 'haml2handlebars/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'haml2erb'
-  s.version     = Haml2Erb::VERSION
-  s.authors     = ['Elia Schito']
-  s.email       = ['perlelia@gmail.com']
+  s.name        = 'haml2handlebars'
+  s.version     = Haml2Handlebars::VERSION
+  s.authors     = ['Elia Schito', 'Micah Geisel']
+  s.email       = ['perlelia@gmail.com', 'micah@botandrose.com']
   s.homepage    = ''
-  s.summary     = %q{Convert Haml templates to Erb!}
-  s.description = %q{Converts Haml templates to Erb templates using the official Haml::Engine}
+  s.summary     = %q{Convert Haml templates to Handlebars!}
+  s.description = %q{Converts Haml templates to Handlebars templates using the official Haml::Engine}
 
-  s.rubyforge_project = 'haml2erb'
+  s.rubyforge_project = 'haml2handlebars'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

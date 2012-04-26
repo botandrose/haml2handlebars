@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-require 'haml2erb'
+require 'haml2handlebars'
 
 if ARGV.any? {|arg| not File.file? arg}
   puts <<-USAGE
@@ -12,8 +12,8 @@ Usage:
   USAGE
 end
 
-haml_file, erb_file = *ARGV
+haml_file, handlebars_file = *ARGV
 input  = haml_file ? File.open(haml_file)     : $stdin
-output = erb_file  ? File.open(erb_file, 'w') : $stdout
+output = handlebars_file  ? File.open(handlebars_file, 'w') : $stdout
 
-output.write Haml2Erb.convert(input.read)
+output.write Haml2Handlebars.convert(input.read)

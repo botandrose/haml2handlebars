@@ -1,4 +1,4 @@
-module Haml2Erb
+module Haml2Handlebars
   class AttributesParser
     class DynamicAttributes < StandardError
     end

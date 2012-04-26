@@ -1,40 +1,57 @@
-# haml2erb
+# haml2handlebars
 
-haml2erb is a tool for converting [Haml](http://haml-lang.com/) to Erb markup.
-
-
-## Installing and loading haml2erb
-
-haml2erb is currently distributed as a Rails plugin.
-
-Simply move the main haml2erb directory into the vendor/plugins directory of your Rails application.
+haml2handlebars is a tool for converting [Haml](http://haml-lang.com/) to Handlebars markup.
 
 
-## Using haml2erb
+## Installing and loading haml2handlebars
 
-Use the `haml2erb` command line or from Ruby call the `Haml2Erb.convert` method to have Haml markup translated into Erb.
+haml2handlebars is currently distributed as a ruby gem.
+
+`gem install haml2handlebars`
+
+
+## Using haml2handlebars
+
+Use the `haml2handlebars` command line or from Ruby call the `Haml2Handlebars.convert` method to have Haml markup translated into Handlebars.
 
 ### Example: Simple conversion
 
 ```bash
-  echo '.foo' | haml2erb
-  # <div class='foo'></div>
+echo '.foo= bar' | haml2handlebars
+# <div class='foo'>{{bar}}</div>
 ```
 
 ```ruby
-  Haml2Erb.convert('.foo')
-  # => "<div class='foo'></div>\n"
+haml = """
+- if foo
+  .bar= baz
+- else
+  = qux
+"""
+Haml2Handlebars.convert(haml)
+# =>
+# {{#if foo}}
+#   <div class='bar'>{{baz}}</div>
+# {{else}}
+#   {{qux}}
+# {{/if}}
 ```
 
 
+## TODO
+
+* Integrate with Rails Asset Pipeline for use in rails-ember projects, probably in a separate gem that depends on this?
+
 ## License
 
-[MIT_LICENSE](/elia/haml2erb/blob/master/MIT_LICENSE)
+[MIT_LICENSE](/botandrose/haml2handlebars/blob/master/MIT_LICENSE)
 
 
 ## Credits
 
-For the [original implementation](https://github.com/c1sgo/haml2erb): 
+Based on [elia/haml2erb](https://github.com/elia/haml2erb):
+[Elia Schito](https://github.com/elia)
 
+Which is based on [c1sgo/haml2erb](https://github.com/c1sgo/haml2erb): 
 [Chris Goddard](https://github.com/cgoddard)
 [Louis Sivillo](https://github.com/BeaconInteractive)

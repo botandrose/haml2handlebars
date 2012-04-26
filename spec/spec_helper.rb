@@ -1,3 +1,3 @@
 $:.push File.expand_path('../../lib')
 
-require 'haml2erb'
+require 'haml2handlebars'

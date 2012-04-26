@@ -1,5 +1,5 @@
 require 'haml'
-require 'haml2erb/attributes_parser'
+require 'haml2handlebars/attributes_parser'
 
 module Haml::Parser
   START_BLOCK_KEYWORDS << "each"
@@ -7,7 +7,7 @@ module Haml::Parser
   BLOCK_KEYWORD_REGEX = /^-\s*(?:(#{MID_BLOCK_KEYWORDS.join('|')})|#{START_BLOCK_KEYWORD_REGEX.source})\b/
 end
 
-module Haml2Erb
+module Haml2Handlebars
   class Engine < Haml::Engine
 
 
@@ -72,7 +72,7 @@ module Haml2Erb
 
     def push_script text, opts={}
       tag_lead = opts[:block_given] ? "#" : ""
-      erb_tag = "{{#{tag_lead}#{text.strip}}}"
+      handlebars_tag = "{{#{tag_lead}#{text.strip}}}"
 
       # USED TO START HERE:
       return if options[:suppress_eval]
@@ -91,11 +91,11 @@ module Haml2Erb
 
       unless block_given?
         # WAS: push_generated_script(no_format ? "#{text}\n" : "#{static_method}(#{output_expr});")
-        push_generated_script(erb_tag.inspect)
+        push_generated_script(handlebars_tag.inspect)
 
         concat_merged_text("\n") unless opts[:in_tag] || opts[:nuke_inner_whitespace]
 
-        # push_generated_script(erb_tag.inspect)
+        # push_generated_script(handlebars_tag.inspect)
         # 
         # concat_merged_text("\n") unless opts[:in_tag] || opts[:nuke_inner_whitespace]
 
@@ -104,7 +104,7 @@ module Haml2Erb
       end
 
       flush_merged_text
-      push_generated_script erb_tag.inspect
+      push_generated_script handlebars_tag.inspect
       concat_merged_text("\n") unless opts[:in_tag] || opts[:nuke_inner_whitespace]
       
       # push_silent text
@@ -118,7 +118,7 @@ module Haml2Erb
       concat_merged_text("\n") unless opts[:in_tag] || opts[:nuke_inner_whitespace] || @options[:ugly]
     end
 
-    def to_erb(scope = Object.new, locals = {}, &block)
+    def to_handlebars(scope = Object.new, locals = {}, &block)
       buffer = Haml::Buffer.new(scope.instance_variable_get('@haml_buffer'), options_for_buffer)
 
       if scope.is_a?(Binding) || scope.is_a?(Proc)
