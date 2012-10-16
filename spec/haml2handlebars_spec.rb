@@ -35,6 +35,11 @@ haml = %q{
     %aside.right
       %section#tweets(data-widget="twitter")
       %section#hammurabi
+
+      .helper
+        = action edit article on="mouseover"
+      .attribute-helper
+        %a(href="#" hb-action="edit article on='mouseover'") ZOMG
 }
 
 handlebars = %q{<!DOCTYPE html>
@@ -70,6 +75,12 @@ handlebars = %q{<!DOCTYPE html>
     <aside class='right'>
       <section data-widget='twitter' id='tweets'></section>
       <section id='hammurabi'></section>
+      <div class='helper'>
+        {{action edit article on="mouseover"}}
+      </div>
+      <div class='attribute-helper'>
+        <a href='#' {{action edit article on='mouseover'}}>ZOMG</a>
+      </div>
     </aside>
   </body>
 </html>

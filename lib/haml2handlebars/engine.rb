@@ -1,10 +1,71 @@
 require 'haml'
 require 'haml2handlebars/attributes_parser'
 
-module Haml::Parser
-  START_BLOCK_KEYWORDS << "each"
-  START_BLOCK_KEYWORD_REGEX = /(?:\w+(?:,\s*\w+)*\s*=\s*)?(#{START_BLOCK_KEYWORDS.join('|')})/
-  BLOCK_KEYWORD_REGEX = /^-\s*(?:(#{MID_BLOCK_KEYWORDS.join('|')})|#{START_BLOCK_KEYWORD_REGEX.source})\b/
+module Haml
+  module Parser
+    START_BLOCK_KEYWORDS << "each"
+    START_BLOCK_KEYWORD_REGEX = /(?:\w+(?:,\s*\w+)*\s*=\s*)?(#{START_BLOCK_KEYWORDS.join('|')})/
+    BLOCK_KEYWORD_REGEX = /^-\s*(?:(#{MID_BLOCK_KEYWORDS.join('|')})|#{START_BLOCK_KEYWORD_REGEX.source})\b/
+  end
+
+  module Compiler
+    def self.build_attributes(is_html, attr_wrapper, escape_attrs, attributes = {})
+      quote_escape = attr_wrapper == '"' ? "&quot;" : "&apos;"
+      other_quote_char = attr_wrapper == '"' ? "'" : '"'
+
+      if attributes['data'].is_a?(Hash)
+        attributes = attributes.dup
+        attributes =
+          Haml::Util.map_keys(attributes.delete('data')) {|name| "data-#{name}"}.merge(attributes)
+      end
+
+      result = attributes.collect do |attr, value|
+        next if value.nil?
+
+        value = filter_and_join(value, ' ') if attr == 'class'
+        value = filter_and_join(value, '_') if attr == 'id'
+
+        if value == true
+          next " #{attr}" if is_html
+          next " #{attr}=#{attr_wrapper}#{attr}#{attr_wrapper}"
+        elsif value == false
+          next
+        end
+
+        escaped =
+          if escape_attrs == :once
+            Haml::Helpers.escape_once(value.to_s)
+          elsif escape_attrs
+            Haml::Helpers.html_escape(value.to_s)
+          else
+            value.to_s
+          end
+        value = Haml::Helpers.preserve(escaped)
+        if escape_attrs
+          # We want to decide whether or not to escape quotes
+          value = value.gsub('&quot;', '"')
+          this_attr_wrapper = attr_wrapper
+          if value.include? attr_wrapper
+            if value.include? other_quote_char
+              value = value.gsub(attr_wrapper, quote_escape)
+            else
+              this_attr_wrapper = other_quote_char
+            end
+          end
+        else
+          this_attr_wrapper = attr_wrapper
+        end
+
+        if attr =~ /^hb-/
+          attr = attr[3..-1]
+          " {{#{attr} #{value}}}"
+        else
+          " #{attr}=#{this_attr_wrapper}#{value}#{this_attr_wrapper}"
+        end
+      end
+      result.compact.sort.join
+    end
+  end
 end
 
 module Haml2Handlebars
